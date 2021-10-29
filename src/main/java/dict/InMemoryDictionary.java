@@ -1,6 +1,8 @@
 package dict;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.TreeMap;
 
@@ -20,20 +22,41 @@ import java.util.TreeMap;
 public class InMemoryDictionary extends TreeMap<String,String> implements PersistentDictionary  {
 	private static final long serialVersionUID = 1L; // (because we're extending a serializable class)
 
+	File dictfile;
 	public InMemoryDictionary(File dictFile) {
-		// TODO: Implement constructor
+		this.dictfile = dictfile;
 	}
 	
 	@Override
 	public void open() throws IOException {
-		// TODO Auto-generated method stub
-		
+		FileReader fr = new FileReader(dictfile);
+		BufferedReader br = new BufferedReader(fr);
+
+		String line;
+		while ((line = br.readLine()) != null) { // read line by line
+			String word;
+			String def;
+			int dividor = line.indexOf(':'); //split string by :
+			if (dividor < 0) {
+				word = line;
+				def = null;
+			} else {
+				word = substring(0, dividor);
+				def = substring(dividor+1,line.length());
+			}
+			put(key,value);
+		}
+		br.close();
 	}
 
 	@Override
 	public void close() throws IOException {
-		// TODO Auto-generated method stub
-		
+		FileWriter fw = new FileWriter(dictfile);
+		BufferedReader bw = new BufferedReader(fw);
+		for (Map.Entry<String, String> entry : this.entrySet()) {
+			bf.append(entry.getKey() + ':' + entry.getValau() + "\n");
+		}
+		bf.close();
 	}
-	
+
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Streams {
@@ -15,8 +16,23 @@ public class Streams {
 	 * @return A list containing the bytes between the first occurrence of a quote character and the second.
 	 */
 	public static List<Byte> getQuoted(InputStream in) throws IOException {
-		// TODO: Implement
-		return null;
+		ArrayList<Byte> result = new ArrayList<Byte>(); //List is aan interface and ArrayList implements it
+		int counter = 0;
+		boolean seenquote = false;
+		for (int ch = in.read(); ch >= 0; ch = in.read()) {
+			if (seenquote) {
+				if (ch == '"') {
+					return result;
+				}
+				result.add((byte) ch);
+			}
+			else if(ch == '"') {
+				seenquote = true;
+			}
+
+		}
+		if(!seenquote) return null;
+		return result;
 	}
 	
 	
@@ -27,8 +43,14 @@ public class Streams {
 	 * @return The string read up to (not including) the endMark (if the endMark is not found, return up to the end of the stream).
 	 */
 	public static String readUntil(Reader in, String endMark) throws IOException {
-		// TODO: Implement
-		return null;
+		StringBuilder s1 = new StringBuilder();
+		for (int ch; (ch = in.read()) != -1; ) {
+			s1.append((char) ch);
+			if (s1.toString().endsWith(endMark)) {
+				return s1.substring(0, s1.length() - endMark.length());
+			}
+		}
+		return s1.toString();
 	}
 	
 	/**
@@ -38,7 +60,10 @@ public class Streams {
 	 * @param badByte
 	 */
 	public static void filterOut(InputStream in, OutputStream out, byte badByte) throws IOException {
-		// TODO: Implement
+		for (int b = in.read(); b>=0; b=in.read()) {
+			if ((byte)b != badByte){
+				out.write((byte)b);
+			}
 	}
 	
 	/**
@@ -49,7 +74,14 @@ public class Streams {
 	 * @return the number read from the stream
 	 */
 	public static long readNumber(InputStream in) throws IOException {
-		// TODO: Implement
-		return 0;
+		int count = 0;
+		long res = 0;
+		for (int b= in.read() ; b>=0 && count<5 ; b = in.read() ) {
+			res = res << 8;
+			res = res | b;
+			count++;
+		}
+		if(count<5) return -1;
+		return res;
 	}
 }
